@@ -18,81 +18,362 @@ window.addEventListener('scroll', () => {
     }
 
     lastScroll = scrollPosition();
-})
+});
 
 
+const appHeight = () => {
+    const doc = document.documentElement;
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+}
+window.addEventListener('resize', appHeight);
+appHeight();
 
-slider(
-    '.about__slider',
-    '.about__slide',
-    '.about__slider-next',
-    '.about__slider-prev',
-    '.about__slider-wrapper',
-    '.about__slider-inner');
-function slider(container, slide, nextArrow, prevArrow, wrapper, field) {
-    let offset = 0;
-    let slideIndex = 1;
-
-    const slides = document.querySelectorAll(slide),
-        slider = document.querySelector(container),
-        prev = document.querySelector(prevArrow),
-        next = document.querySelector(nextArrow),
-        slidesWrapper = document.querySelector(wrapper),
-        width = window.getComputedStyle(slidesWrapper).width,
-        slidesField = document.querySelector(field);
-
-    
-    slidesField.style.width = 100 * slides.length + '%';
-    slidesField.style.display = 'flex';
-    slidesField.style.transition = '0.5s all';
-
-    slidesWrapper.style.overflow = 'hidden';
-    // console.log(width);  
-    slides.forEach(slide => {
-        slide.style.width = width;
-    });
-
-    slider.style.position = 'relative';
-
-
-    next.addEventListener('click', () => {
-        if (offset == (deleteNotDigits(width) * (slides.length - 1))) {
-            offset = 0;
-        } else {
-            offset += deleteNotDigits(width); 
-        }
-
-        slidesField.style.transform = `translateX(-${offset}px)`;
-
-        if (slideIndex == slides.length) {
-            slideIndex = 1;
-        } else {
-            slideIndex++;
-        }
-
-    });
-
-    prev.addEventListener('click', () => {
-        if (offset == 0) {
-            offset = deleteNotDigits(width) * (slides.length - 1);
-        } else {
-            offset -= deleteNotDigits(width);
-        }
-
-        slidesField.style.transform = `translateX(-${offset}px)`;
-
-        if (slideIndex == 1) {
-            slideIndex = slides.length;
-        } else {
-            slideIndex--;
-        }
-    });
-
-
-    function deleteNotDigits(str) {
-        return +str.replace(/\D/g, '');
+let flag = false;
+function MediaFunction(media) {
+    if (media.matches) { // Если медиа запрос совпадает
+        let hamburger = document.querySelector('.hamburger');
+        hamburger.addEventListener('click', ()=>{
+            document.querySelector('.header__wrapper').classList.toggle('header__wrapper__active');
+        })
+        let block = document.querySelector('.header__close');
+        block.addEventListener("click", ()=>{
+            header.querySelector('.header__wrapper').classList.toggle('header__wrapper__active');
+        });
+        
+        let dropdowns = document.querySelectorAll('.header__nav__item__dropdown');
+        
+        dropdowns.forEach(elem =>{
+            for (const child of elem.children) {
+                switch (child.tagName) {
+                    case "UL":
+                        if(!(child.classList.contains('back'))){
+                            let back = document.createElement('li');
+                            back.classList.add("back");
+                            back.innerHTML = `<a> Назад ${'\u{25B2}'}</a>`;
+                            child.append(back);
+                        }
+                        break;
+                    case "BUTTON":
+                        child.addEventListener('click', ()=>{
+                            document.querySelector('nav').classList.remove('header__nav__active');
+                            elem.querySelector('.header__nav__item__dropdown__dropdown-content').style.top = "50%";
+                        });
+                    default:
+                        break;
+                }
+            }
+            elem.querySelector('.back').addEventListener('click', ()=>{
+                document.querySelector('nav').classList.add('header__nav__active');
+                elem.querySelector('.header__nav__item__dropdown__dropdown-content').style.top = "200%";
+            });
+        });
+        flag = true;
     }
-} 
+    else if (flag == true){
+        window.location.reload();
+    }
+  }
+  
+  let media576 = window.matchMedia("(max-width: 576px)");
+  MediaFunction(media576);
+  media576.addEventListener("change", MediaFunction);
+
+//   let media992 =  window.matchMedia('(min-width: 992px)')
+//    let media1200 = window.matchMedia("(max-width: 1200px)");
+
+  let mediaPromo =  window.matchMedia('(min-width: 992px) and (max-width: 1200px)');
+  let mediaPromoMobile = window.matchMedia('(min-width: 320px) and (max-width: 576px)');
+
+
+  MediaFunctionPromo(mediaPromo);
+  mediaPromo.addEventListener("change", MediaFunctionPromo);
+
+  MediaFunctionPromoMobile(mediaPromoMobile);
+  mediaPromoMobile.addEventListener("change", MediaFunctionPromoMobile );
+
+  function  MediaFunctionPromo(mediaPromo){
+    if (mediaPromo.matches) { 
+        document.querySelector('.promo__navigation img').style.cssText = "width: 400px; height: 375px";
+        let area = document.querySelectorAll('area');
+        area[0].coords = "190,30,30";
+        area[1].coords = "310,34,30";
+        area[2].coords = "28,124,25";
+        area[3].coords = "360,110,25";
+        area[4].coords = "65,23, 110,75"
+    }
+    else{
+        document.querySelector('.promo__navigation img').style.cssText = "";
+        let area = document.querySelectorAll('area');
+        area[0].coords = "240,37,40";
+        area[1].coords = "385,40,40";
+        area[2].coords = "38,160,30";
+        area[3].coords = "450,135,30";
+        area[4].coords = "56,20, 140,102"
+    }
+  }
+
+  function MediaFunctionPromoMobile(mediaMobile){
+    if (mediaMobile.matches) { 
+        window.addEventListener("resize", ()=>{
+            document.querySelector('.promo__navigation img').style.cssText = `width: ${document.documentElement.clientWidth -60}px; height: ${document.documentElement.clientWidth - 85}px`;
+            let area = document.querySelectorAll('area');
+            area[0].coords = `${125 + 125* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${20 + 10* ((document.documentElement.clientWidth - 320) / (576 - 320))},${20 + 10* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+            area[1].coords = `${205 + 185* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${20 + 25* ((document.documentElement.clientWidth - 320) / (576 - 320))},${20 + 25* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+            area[2].coords = `${18 + 22* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${75 + 85* ((document.documentElement.clientWidth - 320) / (576 - 320))},${20 + 5* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+            area[3].coords = `${220 + 230* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${63 + 77* ((document.documentElement.clientWidth - 320) / (576 - 320))},${20 + 5* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+            area[4].coords = `${40 + 40* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${21 + 27* ((document.documentElement.clientWidth - 320) / (576 - 320))}, ${68 + 67* ((document.documentElement.clientWidth - 320) / (576 - 320))},${46 + 54* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+
+
+          });
+          document.querySelector('.promo__navigation img').style.cssText = `width: ${document.documentElement.clientWidth -60}px; height: ${document.documentElement.clientWidth - 85}px`;
+          let area = document.querySelectorAll('area');
+          area[0].coords = `${125 + 125* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${20 + 10* ((document.documentElement.clientWidth - 320) / (576 - 320))},${20 + 10* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+          area[1].coords = `${205 + 185* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${20 + 25* ((document.documentElement.clientWidth - 320) / (576 - 320))},${20 + 25* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+          area[2].coords = `${18 + 22* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${75 + 85* ((document.documentElement.clientWidth - 320) / (576 - 320))},${20 + 5* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+          area[3].coords = `${225 + 230* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${63 + 77* ((document.documentElement.clientWidth - 320) / (576 - 320))},${18 + 5* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+          area[4].coords = `${40 + 40* ((document.documentElement.clientWidth - 320) / (576 - 320)) },${21 + 27* ((document.documentElement.clientWidth - 320) / (576 - 320))}, ${68 + 67* ((document.documentElement.clientWidth - 320) / (576 - 320))},${46 + 54* ((document.documentElement.clientWidth - 320) / (576 - 320))}`;
+
+        // area[0].coords = `${ calc(145 + 125* ((document.documentElement.clientWidth - 320) / (1200 - 320))) },30,30`;
+        // area[1].coords = "310,34,30";
+        // area[2].coords = "28,124,25";
+        // area[3].coords = "360,110,25";
+        // area[4].coords = "65,23, 110,75";
+    }
+  }
+
+//   function EditAreaAndWidthWithHeight(){
+
+//   }
+
+const images = document.querySelectorAll('.about__slide');
+const sliderLine = document.querySelector('.about__slider-inner');
+let count = 0;
+let width;
+
+function init() {
+    width = document.querySelector('.about__slider-wrapper').offsetWidth;
+    sliderLine.style.width = width * images.length + 'px';
+    images.forEach(item => {
+        item.style.width = width + 'px';
+    });
+    rollSlider();
+}
+
+init();
+window.addEventListener('resize', init);
+
+document.querySelector('.about__slider-next').addEventListener('click', function () {
+    count++;
+    if (count >= images.length) {
+        count = 0;
+    }
+    rollSlider();
+});
+
+document.querySelector('.about__slider-prev').addEventListener('click', function () {
+    count--;
+    if (count < 0) {
+        count = images.length - 1;
+    }
+    rollSlider();
+});
+
+function rollSlider() {
+    sliderLine.style.transform = 'translate(-' + count * width + 'px)';
+
+}
+
+//------------------------------------------------------------------------------------------------------------------------------
+
+
+let slider = document.querySelector('.about__slider'),
+  sliderList = slider.querySelector('.about__slider-wrapper'),
+  sliderTrack = slider.querySelector('.about__slider-inner'),
+  slides = slider.querySelectorAll('.about__slide'),
+  arrows = slider.querySelector('.about__slider__arrows'),
+  prev = arrows.children[0],
+  next = arrows.children[1],
+  slideWidth = slides[0].offsetWidth,
+  slideIndex = 0,
+  posInit = 0,
+  posX1 = 0,
+  posX2 = 0,
+  posY1 = 0,
+  posY2 = 0,
+  posFinal = 0,
+  isSwipe = false,
+  isScroll = false,
+  allowSwipe = true,
+  transition = true,
+  nextTrf = 0,
+  prevTrf = 0,
+  lastTrf = --slides.length * slideWidth,
+  posThreshold = slides[0].offsetWidth * 0.35,
+  trfRegExp = /([-0-9.]+(?=px))/,
+  swipeStartTime,
+  swipeEndTime,
+  getEvent = function() {
+    return (event.type.search('touch') !== -1) ? event.touches[0] : event;
+  },
+  slide = function() {
+    if (transition) {
+      sliderTrack.style.transition = 'transform .5s';
+    }
+    sliderTrack.style.transform = `translate3d(-${slideIndex * slideWidth}px, 0px, 0px)`;
+
+    prev.classList.toggle('disabled', slideIndex === 0);
+    next.classList.toggle('disabled', slideIndex === --slides.length);
+  },
+  swipeStart = function() {
+    let evt = getEvent();
+
+    if (allowSwipe) {
+
+      swipeStartTime = Date.now();
+      
+      transition = true;
+
+      nextTrf = (slideIndex + 1) * -slideWidth;
+      prevTrf = (slideIndex - 1) * -slideWidth;
+
+      posInit = posX1 = evt.clientX;
+      posY1 = evt.clientY;
+
+      sliderTrack.style.transition = '';
+
+      document.addEventListener('touchmove', swipeAction);
+      document.addEventListener('mousemove', swipeAction);
+      document.addEventListener('touchend', swipeEnd);
+      document.addEventListener('mouseup', swipeEnd);
+
+      sliderList.classList.remove('grab');
+      sliderList.classList.add('grabbing');
+    }
+  },
+  swipeAction = function() {
+
+    let evt = getEvent(),
+      style = sliderTrack.style.transform,
+      transform = +style.match(trfRegExp)[0];
+
+    posX2 = posX1 - evt.clientX;
+    posX1 = evt.clientX;
+
+    posY2 = posY1 - evt.clientY;
+    posY1 = evt.clientY;
+
+    if (!isSwipe && !isScroll) {
+      let posY = Math.abs(posY2);
+      if (posY > 7 || posX2 === 0) {
+        isScroll = true;
+        allowSwipe = false;
+      } else if (posY < 7) {
+        isSwipe = true;
+      }
+    }
+
+    if (isSwipe) {
+      if (slideIndex === 0) {
+        if (posInit < posX1) {
+          setTransform(transform, 0);
+          return;
+        } else {
+          allowSwipe = true;
+        }
+      }
+
+      // запрет ухода вправо на последнем слайде
+      if (slideIndex === --slides.length) {
+        if (posInit > posX1) {
+          setTransform(transform, lastTrf);
+          return;
+        } else {
+          allowSwipe = true;
+        }
+      }
+
+      if (posInit > posX1 && transform < nextTrf || posInit < posX1 && transform > prevTrf) {
+        reachEdge();
+        return;
+      }
+
+      sliderTrack.style.transform = `translate3d(${transform - posX2}px, 0px, 0px)`;
+    }
+
+  },
+  swipeEnd = function() {
+    posFinal = posInit - posX1;
+
+    isScroll = false;
+    isSwipe = false;
+
+    document.removeEventListener('touchmove', swipeAction);
+    document.removeEventListener('mousemove', swipeAction);
+    document.removeEventListener('touchend', swipeEnd);
+    document.removeEventListener('mouseup', swipeEnd);
+
+    sliderList.classList.add('grab');
+    sliderList.classList.remove('grabbing');
+
+    if (allowSwipe) {
+      swipeEndTime = Date.now();
+      if (Math.abs(posFinal) > posThreshold || swipeEndTime - swipeStartTime < 300) {
+        if (posInit < posX1) {
+          slideIndex--;
+        } else if (posInit > posX1) {
+          slideIndex++;
+        }
+      }
+
+      if (posInit !== posX1) {
+        allowSwipe = false;
+        slide();
+      } else {
+        allowSwipe = true;
+      }
+
+    } else {
+      allowSwipe = true;
+    }
+
+  },
+  setTransform = function(transform, comapreTransform) {
+    if (transform >= comapreTransform) {
+      if (transform > comapreTransform) {
+        sliderTrack.style.transform = `translate3d(${comapreTransform}px, 0px, 0px)`;
+      }
+    }
+    allowSwipe = false;
+  },
+  reachEdge = function() {
+    transition = false;
+    swipeEnd();
+    allowSwipe = true;
+  };
+
+sliderTrack.style.transform = 'translate3d(0px, 0px, 0px)';
+sliderList.classList.add('grab');
+
+sliderTrack.addEventListener('transitionend', () => allowSwipe = true);
+slider.addEventListener('touchstart', swipeStart);
+slider.addEventListener('mousedown', swipeStart);
+
+arrows.addEventListener('click', function() {
+  let target = event.target;
+
+  if (target.classList.contains('next')) {
+    slideIndex++;
+  } else if (target.classList.contains('prev')) {
+    slideIndex--;
+  } else {
+    return;
+  }
+
+  slide();
+});
+
+
+
 
 form('form');
 function form(inputform) {
@@ -363,27 +644,56 @@ let randomId = 0;
 
 basket.addEventListener('click', ()=>{
     cart.classList.add('cart__active');
+    document.querySelector('body').style.overflowY = "hidden";
 })
 close.addEventListener('click',()=>{
     cart.classList.remove('cart__active');
+    document.querySelector('body').style.overflowY = "scroll";
 })
 continues.addEventListener('click',()=>{
     cart.classList.remove('cart__active');
+    document.querySelector('body').style.overflowY = "scroll";
 })
 
-const plusFullPrice = (currentPrice) => {
-	return price += currentPrice;
+
+// const plusFullPrice = (currentPrice) => {
+// 	return price += currentPrice;
+// };
+
+// const minusFullPrice = (currentPrice) => {
+// 	return price -= currentPrice;
+// };
+
+
+// const printFullPrice = () => {
+// 	fullPrice.textContent = `${price}`;
+// };
+
+const updateStorage = () => {
+    let total =0;
+    let parent = cartProductsList.querySelector('.simplebar-content');
+
+    let items = parent.querySelectorAll('.cart__item');
+
+    for (let i = 0; i < items.length; i++) {
+        let BeginPrice = parseInt(items[i].querySelector('.cart-product__price span').textContent);
+        let InputPrice = parseInt(items[i].querySelector('.cart-product__counter').value);
+        total = total + (BeginPrice * InputPrice);
+    }
+    fullPrice.textContent = `${total}`;
+
+
+    let html = parent.innerHTML;
+    html = html.trim();
+
+    if (html.length) {
+        localStorage.setItem('products', html);
+    } else {
+        localStorage.removeItem('products');
+    }
 };
 
-const minusFullPrice = (currentPrice) => {
-	return price -= currentPrice;
-};
 
-
-const printFullPrice = () => {
-	fullPrice.textContent = `${price}`;
-};
-printFullPrice();
 const generateCartProduct = (img, title, price, id) => {
 	return `
     <li class="cart__item">
@@ -403,32 +713,14 @@ const generateCartProduct = (img, title, price, id) => {
 const deleteProducts = (productParent) => {
 	let id = productParent.querySelector('.cart-product').dataset.id;
 	document.querySelector(`.shop__product[data-id="${id}"]`).querySelector('.btn-shop').disabled = false;
-	
-	let currentPrice = parseInt(productParent.querySelector('.cart-product__price span').textContent);
-	minusFullPrice(currentPrice);
     productParent.remove();
-	printFullPrice();
     updateStorage();
 
 };
 
 const Amount = (productParent) => {
         let input = productParent.querySelector('.cart-product__counter');
-        let currentPrice = parseInt(productParent.querySelector('.cart-product__price span').textContent);
-        let amoung = 1;
-        input.addEventListener('input', () => {
-            console.log(`INPUT: ${typeof(input.value)} AMOUNG ${amoung}`);
-            if(parseInt(input.value) > amoung){
-                plusFullPrice(currentPrice);
-                printFullPrice();
-                amoung = parseInt(input.value);
-            }
-            if(amoung > parseInt(input.value)){
-                minusFullPrice(currentPrice);
-                printFullPrice();
-                amoung = parseInt(input.value);
-
-            }
+        input.addEventListener('change', () => {
             updateStorage();
         });
 };
@@ -444,8 +736,6 @@ productsBtn.forEach(el => {
 		let title = parent.querySelector('.shop__name').textContent;
 		let priceNumber = parseInt(parent.querySelector('.shop__price span').textContent);
         cart.classList.add('cart__active');
-		plusFullPrice(priceNumber);
-		printFullPrice();
 		cartProductsList.querySelector('.simplebar-content').insertAdjacentHTML('afterbegin', generateCartProduct(img, title, priceNumber, id));
         updateStorage();
 		
@@ -462,52 +752,37 @@ cartProductsList.addEventListener('click', (e) => {
 		deleteProducts(e.target.closest('.cart__item'));
 	}
 });
-
-btnOrder.addEventListener('click', ()=>{
-    price = 0;
-    printFullPrice();
-    cartProductsList.querySelector('.simplebar-content').innerHTML = '';
-    localStorage.removeItem("products");
-    productsBtn.forEach(btn =>{
-        btn.disabled = false;
-    })
-});
-
-
-
-const countSumm = () => {
-    document.querySelectorAll('.cart__item').forEach(el => {
-        price += parseInt(el.querySelector('.cart-product__price span').textContent);
-    });
-};
-
 const initialState = () => {
     if (localStorage.getItem('products') !== null) {
         cartProductsList.querySelector('.simplebar-content').innerHTML = localStorage.getItem('products');
-        countSumm();
-        printFullPrice();
-
 
         document.querySelectorAll('.cart-product').forEach(el => {
             let id = el.dataset.id;
             document.querySelector(`.shop__product[data-id="${id}"]`).querySelector('.btn-shop').disabled = true;
         });
+        updateStorage();
     }
 };
-
 initialState();
+updateStorage();
+// btnOrder.addEventListener('click', ()=>{
+//     price = 0;
+//     printFullPrice();
+//     cartProductsList.querySelector('.simplebar-content').innerHTML = '';
+//     localStorage.removeItem("products");
+//     productsBtn.forEach(btn =>{
+//         btn.disabled = false;
+//     })
+// });
 
-const updateStorage = () => {
-    let parent = cartProductsList.querySelector('.simplebar-content');
-    let html = parent.innerHTML;
-    html = html.trim();
 
-    if (html.length) {
-        localStorage.setItem('products', html);
-    } else {
-        localStorage.removeItem('products');
-    }
-};
+
+// const countSumm = () => {
+//     document.querySelectorAll('.cart__item').forEach(el => {
+//         price += parseInt(el.querySelector('.cart-product__price span').textContent);
+//     });
+// };
+
 
 
  /**
@@ -528,7 +803,3 @@ const updateStorage = () => {
 
     
 });
-
-// let number = 5
-// let text = `qeqweqweqweqw ${number}`;
-// console.log(typeof(text));
