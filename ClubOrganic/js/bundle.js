@@ -1675,7 +1675,7 @@ function MediaFunction(media) {
         })
         let block = document.querySelector('.header__close');
         block.addEventListener("click", ()=>{
-            header.querySelector('.header__wrapper').classList.toggle('header__wrapper__active');
+            document.querySelector('.header__wrapper').classList.toggle('header__wrapper__active');
         });
         
         let dropdowns = document.querySelectorAll('.header__nav__item__dropdown');
