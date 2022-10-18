@@ -7,15 +7,16 @@ const scrollPosition = () => window.pageYOffset || document.documentElement.scro
 const containHide = () => header.classList.contains('header__hide');
 
 window.addEventListener('scroll', () => {
-    if(scrollPosition() > lastScroll && !containHide() && scrollPosition() > defaultOffset) {
-        //scroll down
-        header.classList.add('header__hide');
+    if(!(window.matchMedia("(max-width: 576px)").matches) || !(document.querySelector('.header__wrapper').classList.contains('header__wrapper__active'))){
+        if(scrollPosition() > lastScroll && !containHide() && scrollPosition() > defaultOffset) {
+            //scroll down
+            header.classList.add('header__hide');
+        }
+        else if(scrollPosition() < lastScroll && containHide()){
+            //scroll up
+            header.classList.remove('header__hide');
+        }
     }
-    else if(scrollPosition() < lastScroll && containHide()){
-        //scroll up
-        header.classList.remove('header__hide');
-    }
-
     lastScroll = scrollPosition();
 });
 
@@ -49,4 +50,5 @@ appHeight();
 }
 
 module.exports = Additional;
+
 

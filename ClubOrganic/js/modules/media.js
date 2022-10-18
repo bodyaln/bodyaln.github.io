@@ -11,6 +11,13 @@ function MediaFunction(media) {
         block.addEventListener("click", ()=>{
             document.querySelector('.header__wrapper').classList.toggle('header__wrapper__active');
         });
+
+        let links = document.querySelectorAll('.header__nav__item__dropdown__dropdown-content li');
+        links.forEach(link =>{
+            link.addEventListener('click', ()=>{
+                document.querySelector('.header__wrapper').classList.toggle('header__wrapper__active');
+            })
+        })
         
         let dropdowns = document.querySelectorAll('.header__nav__item__dropdown');
         
