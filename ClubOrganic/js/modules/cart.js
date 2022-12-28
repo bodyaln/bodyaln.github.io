@@ -1,6 +1,6 @@
 function Cart() {
     const productsBtn = document.querySelectorAll('.btn-shop');
-const btnOrder = document.querySelector('.btn-order');
+const btnOrder = document.querySelector('.cart .btn-order');
 const cartProductsList = document.querySelector('.cart__list');
 const cart = document.querySelector('.cart');
 const continues = document.querySelector('.btn-continue');
@@ -50,7 +50,6 @@ const updateStorage = () => {
     }
     fullPrice.textContent = `${total}`;
 
-
     let html = parent.innerHTML;
     html = html.trim();
 
@@ -59,6 +58,15 @@ const updateStorage = () => {
     } else {
         localStorage.removeItem('products');
     }
+    if(localStorage.getItem('products') == null){
+        btnOrder.style.cursor = "not-allowed";
+        btnOrder.setAttribute('disabled', true);
+    }
+    else{
+        btnOrder.style.cursor = "pointer";
+        btnOrder.removeAttribute('disabled');
+    }
+
 };
 
 
@@ -121,6 +129,7 @@ cartProductsList.addEventListener('click', (e) => {
 	}
 });
 const initialState = () => {
+    
     if (localStorage.getItem('products') !== null) {
         cartProductsList.querySelector('.simplebar-content').innerHTML = localStorage.getItem('products');
 
@@ -131,9 +140,22 @@ const initialState = () => {
         updateStorage();
     }
 };
+btnOrder.addEventListener('click', ()=>{
+        document.querySelector('.orders').style.display = "block";
+        cart.classList.remove('cart__active');
+        document.querySelector('body').style.overflowY = "scroll";
+        localStorage.setItem('products', "");
+        document.querySelectorAll('.btn-shop').forEach((elem)=>{
+            elem.disabled = false;
+            initialState();
+            updateStorage();
+        });
+
+
+        
+});
 initialState();
 updateStorage();
-      
 }
 module.exports = Cart;
 

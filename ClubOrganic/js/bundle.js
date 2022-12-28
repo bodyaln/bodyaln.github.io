@@ -98,7 +98,7 @@ module.exports = Buttons;
 
 function Cart() {
   const productsBtn = document.querySelectorAll('.btn-shop');
-  const btnOrder = document.querySelector('.btn-order');
+  const btnOrder = document.querySelector('.cart .btn-order');
   const cartProductsList = document.querySelector('.cart__list');
   const cart = document.querySelector('.cart');
   const continues = document.querySelector('.btn-continue');
@@ -148,6 +148,13 @@ function Cart() {
       localStorage.setItem('products', html);
     } else {
       localStorage.removeItem('products');
+    }
+    if (localStorage.getItem('products') == null) {
+      btnOrder.style.cursor = "not-allowed";
+      btnOrder.setAttribute('disabled', true);
+    } else {
+      btnOrder.style.cursor = "pointer";
+      btnOrder.removeAttribute('disabled');
     }
   };
   const generateCartProduct = (img, title, price, id) => {
@@ -211,6 +218,17 @@ function Cart() {
       updateStorage();
     }
   };
+  btnOrder.addEventListener('click', () => {
+    document.querySelector('.orders').style.display = "block";
+    cart.classList.remove('cart__active');
+    document.querySelector('body').style.overflowY = "scroll";
+    localStorage.setItem('products', "");
+    document.querySelectorAll('.btn-shop').forEach(elem => {
+      elem.disabled = false;
+      initialState();
+      updateStorage();
+    });
+  });
   initialState();
   updateStorage();
 }
@@ -228,7 +246,9 @@ function cheackForm() {
   function getDynamicInformation(selector) {
     const input = document.querySelector(selector);
     const NameElement = selector.replace(/#/g, '');
+    const btn2 = document.querySelector('.btn-send-orders');
     input.addEventListener('input', () => {
+      console.log("inputting");
       if (document.querySelector(`.message__${NameElement}`)) {
         document.querySelector(`.message__${NameElement}`).remove();
       }
@@ -240,6 +260,7 @@ function cheackForm() {
                 color: #FEFAEC;
                 text-shadow: red 1px 1px 0, red -1px -1px 0, 
                 red -1px 1px 0, red 1px -1px 0;
+                grid-column: 1/3
             `;
       switch (selector) {
         case '#name':
@@ -247,9 +268,22 @@ function cheackForm() {
           if (input.value.match(/\d/g)) {
             input.style.border = "2px solid red";
             statusMessage.innerText = `${'\u{026a0}'} Введіть літери, а не числа`;
-            SendButton(false);
+            SendButton(false, "#cheackbox");
           } else {
-            SendButton(true);
+            SendButton(true, "#cheackbox");
+          }
+          ;
+          break;
+        case '#nameorder':
+          Emptyinput(input);
+          if (input.value.match(/\d/g)) {
+            input.style.border = "2px solid red";
+            statusMessage.innerText = `${'\u{026a0}'} Введіть літери, а не числа`;
+            btn2.style.cursor = "not-allowed";
+            btn2.setAttribute('disabled', true);
+          } else {
+            btn2.style.cursor = "pointer";
+            btn2.removeAttribute('disabled');
           }
           ;
           break;
@@ -258,17 +292,39 @@ function cheackForm() {
           if (input.value.length > 0 && (input.value.length < 6 || !(input.value.includes("@") && input.value.includes(".")))) {
             input.style.border = "2px solid red";
             statusMessage.innerText = `${'\u{026a0}'} Повинні бути символи '.' i '@' та кількість цифр більше 6`;
-            SendButton(false);
+            SendButton(false, "#cheackbox");
           } else {
-            SendButton(true);
+            SendButton(true, "#cheackbox");
+          }
+          break;
+        case '#emailorder':
+          Emptyinput(input);
+          if (input.value.length > 0 && (input.value.length < 6 || !(input.value.includes("@") && input.value.includes(".")))) {
+            input.style.border = "2px solid red";
+            statusMessage.innerText = `${'\u{026a0}'} Повинні бути символи '.' i '@' та кількість цифр більше 6`;
+            btn2.style.cursor = "not-allowed";
+            btn2.setAttribute('disabled', true);
+          } else {
+            btn2.style.cursor = "pointer";
+            btn2.removeAttribute('disabled');
           }
           break;
         case '#checkbox':
           Emptyinput(input);
           if (!input.checked) {
-            SendButton(false);
+            SendButton(false, "#cheackbox");
           } else {
-            SendButton(true);
+            SendButton(true, "#cheackbox");
+          }
+          break;
+        case '#cheackboxorder':
+          Emptyinput(input);
+          if (!input.checked) {
+            btn2.style.cursor = "not-allowed";
+            btn2.setAttribute('disabled', true);
+          } else {
+            btn2.style.cursor = "pointer";
+            btn2.removeAttribute('disabled');
           }
           break;
         case '#tel':
@@ -276,13 +332,30 @@ function cheackForm() {
           if (input.value.match(/\D/g)) {
             input.style.border = "2px solid red";
             statusMessage.innerText = `${'\u{026a0}'} Введіть числа, а не літери чи символи`;
-            SendButton(false);
+            SendButton(false, "#cheackbox");
           } else if (input.value.length < 8 && input.value.length > 0) {
             input.style.border = "2px solid red";
             statusMessage.innerText = `${'\u{026a0}'} Кількість цифр повинна бути більше 8`;
-            SendButton(false);
+            SendButton(false, "#cheackbox");
           } else {
-            SendButton(true);
+            SendButton(true, "#cheackbox");
+          }
+          ;
+          break;
+        case '#telorder':
+          Emptyinput(input);
+          if (input.value.match(/\D/g)) {
+            input.style.border = "2px solid red";
+            statusMessage.innerText = `${'\u{026a0}'} Введіть числа, а не літери чи символи`;
+            SendButton(false, "#cheackboxorder");
+          } else if (input.value.length < 8 && input.value.length > 0) {
+            input.style.border = "2px solid red";
+            statusMessage.innerText = `${'\u{026a0}'} Кількість цифр повинна бути більше 8`;
+            btn2.style.cursor = "not-allowed";
+            btn2.setAttribute('disabled', true);
+          } else {
+            btn2.style.cursor = "pointer";
+            btn2.removeAttribute('disabled');
           }
           ;
           break;
@@ -291,9 +364,9 @@ function cheackForm() {
           if (input.value.length < 50 && input.value.length > 0) {
             input.style.border = "2px solid red";
             statusMessage.innerText = `${'\u{026a0}'} Кількість цифр повинна бути більше 50, Залишилося: ${50 - input.value.length}`;
-            SendButton(false);
+            SendButton(false, "#cheackbox");
           } else {
-            SendButton(true);
+            SendButton(true, "#cheackbox");
           }
           ;
           break;
@@ -308,14 +381,15 @@ function cheackForm() {
   }
   function Emptyinput(input) {
     if (input.value === "") {
-      input.style.border = 'none';
+      input.style.border = '1px solid black';
     } else {
       input.style.border = '2px solid #21a549';
     }
   }
-  function SendButton(meaning) {
-    const cheackbox = document.querySelector('#checkbox');
-    const btn = document.querySelector('.btn-send');
+  function SendButton(meaning, namebox) {
+    const cheackbox = document.querySelector(`${namebox}`);
+    console.log(cheackbox);
+    const btn = document.querySelector('.btn-send-contacts');
     if (!cheackbox.checked || !meaning) {
       btn.style.cursor = "not-allowed";
       btn.setAttribute('disabled', true);
@@ -324,12 +398,16 @@ function cheackForm() {
       btn.removeAttribute('disabled');
     }
   }
-  getDynamicInformation('#checkbox');
+  getDynamicInformation('#cheackbox');
   getDynamicInformation('#name');
   getDynamicInformation('#email');
   getDynamicInformation('#tel');
   getDynamicInformation('#topic');
   getDynamicInformation('#text');
+  getDynamicInformation('#nameorder');
+  getDynamicInformation('#emailorder');
+  getDynamicInformation('#telorder');
+  getDynamicInformation('#cheackboxorder');
 }
 module.exports = cheackForm;
 
@@ -342,18 +420,26 @@ module.exports = cheackForm;
 /***/ (function(module) {
 
 function Form() {
-  form('form');
+  form('.contacts__form');
+  form('.orders__form');
   function form(inputform) {
     const form = document.querySelector(inputform);
-    const clear = document.querySelector('.btn-clear');
+    const clears = document.querySelectorAll('.btn-clear');
+    const close = document.querySelector('.orders__close');
     let inputs = form.querySelectorAll('input');
     const message = {
       loading: 'icons/spinner.svg',
       success: "Дякую! Скоро ми з вами зв'яжемося",
       failure: 'Что-то пошло не так...'
     };
-    clear.addEventListener('click', () => {
-      ClearBorder(form, inputs);
+    close.addEventListener('click', () => {
+      document.querySelector('.orders').style.display = "none";
+    });
+    console.log(clears);
+    clears.forEach(elem => {
+      elem.addEventListener('click', () => {
+        ClearBorder(form, inputs);
+      });
     });
     bindPostData(form);
     function bindPostData(form) {
@@ -376,6 +462,9 @@ function Form() {
         }).catch(() => {
           showThanksModal(message.failure);
         }).finally(() => {
+          if (inputform.includes('orders')) {
+            document.querySelector('.orders').style.display = "none";
+          }
           form.reset();
         });
       });
@@ -390,10 +479,11 @@ function Form() {
       inputs.forEach(element => {
         element.style.border = 'none';
       });
-      form.elements.text.style.border = 'none';
-      form.elements.checkbox.style.border = 'none';
+      // form.elements.text.style.border = 'none'; 
+      // form.elements.checkbox.style.border = 'none'; 
     }
   }
+
   const postData = async (url, data) => {
     let res = await fetch(url, {
       method: "POST",
@@ -404,6 +494,43 @@ function Form() {
     });
     return await res.json();
   };
+  function showThanksModal(message) {
+    openModal('.modal');
+    const thanksModal = document.createElement('div');
+    thanksModal.classList.add('modal__title');
+    thanksModal.innerText = `${message}`;
+    document.querySelector('.modal__content').append(thanksModal);
+    setTimeout(() => {
+      closeModal('.modal');
+    }, 4000);
+  }
+  function closeModal(modalSelector) {
+    const modal = document.querySelector(modalSelector);
+    modal.querySelector('.modal__title').remove();
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  function openModal(modalSelector) {
+    const modal = document.querySelector(modalSelector);
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+  }
+  modal('.modal');
+  function modal(modalSelector) {
+    const modal = document.querySelector(modalSelector);
+    modal.addEventListener('click', e => {
+      if (e.target === modal || e.target.getAttribute('data-close') == "") {
+        closeModal(modalSelector);
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.code === "Escape" && modal.classList.contains('show')) {
+        closeModal(modalSelector);
+      }
+    });
+  }
 }
 module.exports = Form;
 
@@ -514,55 +641,6 @@ function Media() {
   }
 }
 module.exports = Media;
-
-/***/ }),
-
-/***/ "./src/js/modules/modal.js":
-/*!*********************************!*\
-  !*** ./src/js/modules/modal.js ***!
-  \*********************************/
-/***/ (function(module) {
-
-function Modal() {
-  function showThanksModal(message) {
-    openModal('.modal');
-    const thanksModal = document.createElement('div');
-    thanksModal.classList.add('modal__title');
-    thanksModal.innerText = `${message}`;
-    document.querySelector('.modal__content').append(thanksModal);
-    setTimeout(() => {
-      closeModal('.modal');
-    }, 4000);
-  }
-  function closeModal(modalSelector) {
-    const modal = document.querySelector(modalSelector);
-    modal.querySelector('.modal__title').remove();
-    modal.classList.add('hide');
-    modal.classList.remove('show');
-    document.body.style.overflow = '';
-  }
-  function openModal(modalSelector) {
-    const modal = document.querySelector(modalSelector);
-    modal.classList.add('show');
-    modal.classList.remove('hide');
-    document.body.style.overflow = 'hidden';
-  }
-  modal('.modal');
-  function modal(modalSelector) {
-    const modal = document.querySelector(modalSelector);
-    modal.addEventListener('click', e => {
-      if (e.target === modal || e.target.getAttribute('data-close') == "") {
-        closeModal(modalSelector);
-      }
-    });
-    document.addEventListener('keydown', e => {
-      if (e.code === "Escape" && modal.classList.contains('show')) {
-        closeModal(modalSelector);
-      }
-    });
-  }
-}
-module.exports = Modal;
 
 /***/ }),
 
@@ -2077,7 +2155,6 @@ window.addEventListener('DOMContentLoaded', function () {
     cheackForm = __webpack_require__(/*! ./modules/cheackForm */ "./src/js/modules/cheackForm.js"),
     Form = __webpack_require__(/*! ./modules/form */ "./src/js/modules/form.js"),
     Media = __webpack_require__(/*! ./modules/media */ "./src/js/modules/media.js"),
-    Modal = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js"),
     Slider = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js"),
     sliderSwap = __webpack_require__(/*! ./modules/sliderSwap */ "./src/js/modules/sliderSwap.js");
   Additional();
@@ -2086,7 +2163,6 @@ window.addEventListener('DOMContentLoaded', function () {
   cheackForm();
   Form();
   Media();
-  Modal();
   Slider();
   sliderSwap();
 });

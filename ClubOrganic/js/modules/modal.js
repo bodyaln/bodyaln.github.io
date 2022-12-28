@@ -1,5 +1,3 @@
-function Modal(){
-    
 function showThanksModal(message) {
     openModal('.modal');
     const thanksModal = document.createElement('div');
@@ -26,7 +24,6 @@ function openModal(modalSelector) {
     modal.classList.remove('hide');
     document.body.style.overflow = 'hidden';
 }
-modal('.modal');
 function modal(modalSelector) {
     const modal = document.querySelector(modalSelector);
 
@@ -43,5 +40,6 @@ function modal(modalSelector) {
     });
 }
 
-}
-module.exports = Modal;
+// export default modal;
+// export {showThanksModal};
+

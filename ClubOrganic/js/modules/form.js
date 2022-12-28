@@ -1,19 +1,29 @@
+
 function Form(){
     
 
-form('form');
+form('.contacts__form');
+form('.orders__form');
 function form(inputform) {
     const form = document.querySelector(inputform);
-    const clear = document.querySelector('.btn-clear');
+    const clears = document.querySelectorAll('.btn-clear');
+    const close = document.querySelector('.orders__close');
     let inputs = form.querySelectorAll('input');
     const message = {
         loading: 'icons/spinner.svg',
         success: "Дякую! Скоро ми з вами зв'яжемося",
         failure: 'Что-то пошло не так...'
     };
-    clear.addEventListener('click', ()=>{
-        ClearBorder(form, inputs);
-    })
+    close.addEventListener('click', ()=>{
+        document.querySelector('.orders').style.display = "none";
+    });
+    console.log(clears);
+    clears.forEach(elem=>{
+        elem.addEventListener('click', ()=>{
+            ClearBorder(form, inputs);
+        })
+    });
+
     bindPostData(form);
     function bindPostData(form) {
         form.addEventListener('submit', (e) => {
@@ -38,6 +48,9 @@ function form(inputform) {
             }).catch(() => {
                 showThanksModal(message.failure);
             }).finally(() => {
+                if(inputform.includes('orders')){
+                    document.querySelector('.orders').style.display = "none";
+                }
                 form.reset();
             });
         });
@@ -52,8 +65,8 @@ function form(inputform) {
         inputs.forEach(element => {
             element.style.border = 'none'; 
         });
-        form.elements.text.style.border = 'none'; 
-        form.elements.checkbox.style.border = 'none'; 
+        // form.elements.text.style.border = 'none'; 
+        // form.elements.checkbox.style.border = 'none'; 
     }
 }
 
@@ -69,6 +82,50 @@ const postData = async (url, data) => {
 
     return await res.json();
 };
+
+
+function showThanksModal(message) {
+    openModal('.modal');
+    const thanksModal = document.createElement('div');
+    thanksModal.classList.add('modal__title');
+    thanksModal.innerText = `${message}`;
+    document.querySelector('.modal__content').append(thanksModal);
+    setTimeout(() => {
+        closeModal('.modal');
+    }, 4000);
+}
+
+
+function closeModal(modalSelector) {    
+    const modal = document.querySelector(modalSelector);
+    modal.querySelector('.modal__title').remove();
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function openModal(modalSelector) {
+    const modal = document.querySelector(modalSelector);
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+}
+modal('.modal');
+function modal(modalSelector) {
+    const modal = document.querySelector(modalSelector);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.getAttribute('data-close') == "") {
+            closeModal(modalSelector);
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === "Escape" && modal.classList.contains('show')) { 
+            closeModal(modalSelector);
+        }
+    });
+}
 
 }
 

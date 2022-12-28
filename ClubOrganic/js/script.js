@@ -1,5 +1,6 @@
 require('es6-promise').polyfill();
 import 'nodelist-foreach-polyfill';
+
 window.addEventListener('DOMContentLoaded', function() {
 
     const Additional = require('./modules/additional'),
@@ -8,7 +9,6 @@ window.addEventListener('DOMContentLoaded', function() {
     cheackForm = require('./modules/cheackForm'),
     Form = require('./modules/form'),
     Media = require('./modules/media'),
-    Modal = require('./modules/modal'),
     Slider = require('./modules/slider'),
     sliderSwap = require('./modules/sliderSwap');
 
@@ -18,7 +18,6 @@ Cart();
 cheackForm();
 Form();
 Media();
-Modal();
 Slider();  
 sliderSwap();
 });
