@@ -202,7 +202,6 @@ function Cart() {
   cartProductsList.addEventListener('click', e => {
     if (e.target.classList.contains('cart-product__counter')) {
       Amount(e.target.closest('.cart__item'));
-      console.log('click');
     }
     if (e.target.classList.contains('cart-product__delete')) {
       deleteProducts(e.target.closest('.cart__item'));
@@ -248,7 +247,6 @@ function cheackForm() {
     const NameElement = selector.replace(/#/g, '');
     const btn2 = document.querySelector('.btn-send-orders');
     input.addEventListener('input', () => {
-      console.log("inputting");
       if (document.querySelector(`.message__${NameElement}`)) {
         document.querySelector(`.message__${NameElement}`).remove();
       }
@@ -388,7 +386,6 @@ function cheackForm() {
   }
   function SendButton(meaning, namebox) {
     const cheackbox = document.querySelector(`${namebox}`);
-    console.log(cheackbox);
     const btn = document.querySelector('.btn-send-contacts');
     if (!cheackbox.checked || !meaning) {
       btn.style.cursor = "not-allowed";
@@ -435,7 +432,6 @@ function Form() {
     close.addEventListener('click', () => {
       document.querySelector('.orders').style.display = "none";
     });
-    console.log(clears);
     clears.forEach(elem => {
       elem.addEventListener('click', () => {
         ClearBorder(form, inputs);
